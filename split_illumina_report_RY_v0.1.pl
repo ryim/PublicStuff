@@ -147,7 +147,7 @@ sub splitIlluminaReport {
 				print OUT "Name\t$revised_sample.Log R Ratio\t$revised_sample.B Allele Freq\n";
 			}
 			else {
-				print OUT "Name\t$field[$sample_index].Log R Ratio\t$field[$sample_index].B Allele Freq\n";
+				print OUT "Name\tChromosome\tPosition\t$field[$sample_index].Log R Ratio\t$field[$sample_index].B Allele Freq\n";
 			}
 			print OUT join("\t",@field[$name_index, 6, 7, $lrr_index, $baf_index]), "\n";
 		}
