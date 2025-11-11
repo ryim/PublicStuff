@@ -28,7 +28,7 @@
 
 #   Load Rocket modules
 module load \
-    picard \
+    GATK \
     SAMtools \
     BWA \
     minimap2
@@ -98,9 +98,9 @@ echo "$SLURM_JOBID [`date +%Y%m%d_%H%M%S`] Finished SAMtools index. " \
 echo "$SLURM_JOBID [`date +%Y%m%d_%H%M%S`] Starting Picard index"
 echo "-------------------------"
 
-java -jar $EBROOTPICARD/picard.jar CreateSequenceDictionary \
-    R=$genome \
-    O=$(perl -p -e 's/\.fa.*?$|\.fasta.*?$/\.dict/' <<< $genome)
+gatk CreateSequenceDictionary \
+    -R $genome \
+    -O $(perl -p -e 's/\.fa.*?$|\.fasta.*?$/\.dict/' <<< $genome)
 
 echo "-------------------------"
 dur=($SECONDS - $realstarttime)
@@ -126,8 +126,14 @@ echo "$SLURM_JOBID [`date +%Y%m%d_%H%M%S`] Finished bedtools genome generation. 
 echo "$SLURM_JOBID [`date +%Y%m%d_%H%M%S`] Starting bedtools genome generation"
 echo "-------------------------"
 
-wget https://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/faToTwoBit
-chmod 700 faToTwoBit
+#   Generate BLAT database for searching
+if [ ! -e faToTwoBit ]
+then
+#    echo 'Not there!'
+    wget https://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64/faToTwoBit
+    chmod 700 faToTwoBit
+fi
+
 ./faToTwoBit $genome ${genome}.2bit
 
 echo "-------------------------"
